@@ -30,7 +30,7 @@ async function loginWithDiscord() {
     provider: 'discord',
     options: {
       scopes: 'identify',
-      redirectTo: 'https://roflsockie.github.io/asc-coa-raid-helper' + window.location.pathname
+      redirectTo: window.location.origin + window.location.pathname
     }
   })
 }
