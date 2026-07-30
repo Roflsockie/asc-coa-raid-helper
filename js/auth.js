@@ -54,7 +54,10 @@ async function checkManagerRole() {
 
 async function manageManagers() {
   if (!isManager) return
-  const action = prompt('Enter Discord ID to add (or -ID to remove):')
+  var { data: list } = await supa.from('managers').select('discord_id')
+  var ids = (list || []).map(function(m) { return m.discord_id })
+  var msg = 'Current managers:\n' + (ids.length ? ids.join('\n') : '(none)') + '\n\nEnter ID to add, or -ID to remove:'
+  var action = prompt(msg)
   if (!action) return
   if (action.startsWith('-')) {
     await supa.from('managers').delete().eq('discord_id', action.slice(1))
