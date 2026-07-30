@@ -13,7 +13,7 @@
       <a href="index.html" class="header-title">Raid<span>COA</span></a>
       <div class="header-actions">
         <button id="create-raid-btn" class="btn btn-primary hidden" onclick="location.href='create.html'">+ Create Raid</button>
-        <button id="manage-managers-btn" class="btn btn-sm hidden" onclick="manageManagers()">👑 Managers</button>
+        <button id="manage-managers-btn" class="btn btn-sm hidden" onclick="toggleManagerPanel()">👑 Managers</button>
         <div id="user-info" class="user-info hidden">
           <img class="user-avatar" src="" alt="">
           <span class="user-name"></span>
@@ -42,6 +42,25 @@
       <div class="empty-icon">📋</div>
       <h3>No raids yet</h3>
       <p class="page-subtitle">Create the first raid to get started</p>
+    </div>
+
+    <div id="manager-panel" class="card hidden">
+      <div class="card-header">
+        <div>
+          <div class="card-title">👑 Manager Management</div>
+          <div class="card-subtitle">Add or remove guild managers</div>
+        </div>
+        <button class="btn btn-sm" onclick="toggleManagerPanel()">✕ Close</button>
+      </div>
+      <div id="manager-list"></div>
+      <div class="manager-add-form">
+        <h4 style="color:var(--accent-gold);margin-bottom:12px">Add Manager</h4>
+        <div class="form-row" style="grid-template-columns:1fr auto">
+          <input type="text" id="manager-input" class="form-control" placeholder="Discord ID (digits only)" style="font-family:var(--font-mono)">
+          <button class="btn btn-primary" onclick="addManager()">+ Add</button>
+        </div>
+        <div class="form-hint">Ask the user for their Discord ID (right-click their name in Discord → Copy ID)</div>
+      </div>
     </div>
   </main>
 
