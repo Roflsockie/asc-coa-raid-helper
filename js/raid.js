@@ -112,6 +112,12 @@ function renderActions(raidId) {
   const actions = document.getElementById('raid-actions')
   actions.innerHTML = ''
 
+  const deleteBtn = document.createElement('button')
+  deleteBtn.className = 'btn btn-danger btn-sm'
+  deleteBtn.textContent = 'Delete Raid'
+  deleteBtn.onclick = () => deleteRaid(raidId)
+  actions.appendChild(deleteBtn)
+
   if (!isManager || raidData.status !== 'active') return
 
   const cancel = document.createElement('button')
@@ -260,6 +266,14 @@ async function setStatus(raidId, status) {
   renderActions(raidId)
   renderRoster()
   setupSignupForm()
+}
+
+async function deleteRaid(raidId) {
+  if (!confirm('Delete this raid permanently?')) return
+  await supa.from('signups').delete().eq('raid_id', raidId)
+  await supa.from('raids').delete().eq('id', raidId)
+  showToast('Raid deleted', 'info')
+  window.location.href = 'index.html'
 }
 
 async function clearAll(raidId) {
