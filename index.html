@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raid-COA · Signups</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="index.html" class="header-title">Raid<span>COA</span></a>
+      <div class="header-actions">
+        <button id="create-raid-btn" class="btn btn-primary hidden" onclick="location.href='create.html'">+ Create Raid</button>
+        <button id="manage-managers-btn" class="btn btn-sm hidden" onclick="manageManagers()">👑 Managers</button>
+        <div id="user-info" class="user-info hidden">
+          <img class="user-avatar" src="" alt="">
+          <span class="user-name"></span>
+          <span class="user-discord-id" style="font-size:0.7rem;color:var(--text-muted)"></span>
+          <span class="manager-badge hidden">Manager</span>
+          <button class="btn btn-sm" onclick="logout()">Logout</button>
+        </div>
+        <button id="login-btn" class="btn" onclick="loginWithDiscord()">Login with Discord</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Active Raids</h1>
+        <p class="page-subtitle">Sign up for upcoming Conquest of Azeroth raids</p>
+      </div>
+    </div>
+
+    <div id="raid-list">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+
+    <div id="empty-state" class="empty-state hidden">
+      <div class="empty-icon">📋</div>
+      <h3>No raids yet</h3>
+      <p class="page-subtitle">Create the first raid to get started</p>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    setTimeout(function() {
+      document.querySelectorAll('.loading').forEach(function(el) { el.remove(); });
+    }, 5000);
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/data.js"></script>
+  <script defer src="js/supabase.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script defer src="js/index.js"></script>
+</body>
+</html>
