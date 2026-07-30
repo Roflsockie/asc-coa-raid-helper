@@ -48,7 +48,17 @@ async function loadRaids() {
     })
   }
 
-  container.onclick = function(e) {
+  container.onclick = async function(e) {
+    var del = e.target.closest('[data-delete-id]')
+    if (del) {
+      e.stopPropagation()
+      if (!confirm('Delete this raid?')) return
+      var id = del.dataset.deleteId
+      await supa.from('signups').delete().eq('raid_id', id)
+      await supa.from('raids').delete().eq('id', id)
+      await loadRaids()
+      return
+    }
     var card = e.target.closest('.raid-card')
     if (card) {
       sessionStorage.setItem('raidId', card.dataset.id)
@@ -78,6 +88,7 @@ async function loadRaids() {
               '<span class="stat-badge stat-range ' + (c.range >= raid.range_limit ? 'stat-full' : '') + '">🏹 ' + c.range + '/' + raid.range_limit + '</span>'
             : '') +
         '</div>' +
+        (isManager ? '<div class="raid-card-actions"><button class="btn btn-danger btn-sm" data-delete-id="' + raid.id + '" style="font-size:0.75rem;padding:2px 8px">Delete</button></div>' : '') +
       '</div>'
   }).join('')
 }
