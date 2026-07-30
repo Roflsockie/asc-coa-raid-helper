@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS signups (
 -- Managers table
 CREATE TABLE IF NOT EXISTS managers (
   discord_id TEXT PRIMARY KEY,
-  added_by TEXT DEFAULT ''
+  added_by TEXT DEFAULT '',
+  added_by_name TEXT DEFAULT ''
 );
 
 -- Indexes
