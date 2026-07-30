@@ -89,7 +89,7 @@ async function renderManagerPanel() {
       '<div class="manager-avatar">' + initial + '</div>' +
       '<div class="manager-info">' +
         '<div class="manager-id">' + m.discord_id + '</div>' +
-        '<div class="manager-source">added by ' + (m.added_by_name || m.added_by || '?') + '</div>' +
+        '<div class="manager-source">added by ID ' + m.added_by + '</div>' +
       '</div>' +
       '<button class="btn btn-danger btn-sm" onclick="removeManager(\'' + m.discord_id + '\')">✕</button>' +
     '</div>'
@@ -107,8 +107,7 @@ async function addManager() {
 
   var { error } = await supa.from('managers').insert({
     discord_id: id,
-    added_by: currentUser.discordId,
-    added_by_name: currentUser.discordName
+    added_by: currentUser.discordId
   })
   if (error) {
     if (error.code === '23505') { showToast('This user is already a manager', 'error'); return }
