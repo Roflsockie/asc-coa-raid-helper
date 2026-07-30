@@ -62,6 +62,7 @@ async function manageManagers() {
     await supa.from('managers').insert({ discord_id: action, added_by: currentUser.discordId })
   }
   showToast('Done', 'success')
+  location.reload()
 }
 
 function updateUI() {
