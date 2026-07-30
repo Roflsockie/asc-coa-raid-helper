@@ -62,9 +62,11 @@ async function manageManagers() {
   var action = prompt(msg)
   if (!action) return
   if (action.startsWith('-')) {
-    await supa.from('managers').delete().eq('discord_id', action.slice(1))
+    var { error: delErr } = await supa.from('managers').delete().eq('discord_id', action.slice(1))
+    if (delErr) { showToast('Error: ' + delErr.message, 'error'); return }
   } else {
-    await supa.from('managers').insert({ discord_id: action, added_by: currentUser.discordId })
+    var { error: insErr } = await supa.from('managers').insert({ discord_id: action, added_by: currentUser.discordId })
+    if (insErr) { showToast('Error: ' + insErr.message, 'error'); return }
   }
   showToast('Done', 'success')
   location.reload()
