@@ -52,24 +52,81 @@ async function checkManagerRole() {
   return false
 }
 
-async function manageManagers() {
+function toggleManagerPanel() {
+  var panel = document.getElementById('manager-panel')
+  if (!panel) return
+  panel.classList.toggle('hidden')
+  if (!panel.classList.contains('hidden')) renderManagerPanel()
+}
+
+async function renderManagerPanel() {
   if (!isManager) return
-  var { data: list } = await supa.from('managers').select('discord_id')
-  var dbIds = (list || []).map(function(m) { return m.discord_id })
-  var allIds = (CONFIG.MANAGER_USER_IDS || []).concat(dbIds)
-  var unique = allIds.filter(function(id, i) { return allIds.indexOf(id) === i })
-  var msg = 'Current managers:\n' + (unique.length ? unique.join('\n') : '(none)') + '\n\nEnter ID to add, or -ID to remove:'
-  var action = prompt(msg)
-  if (!action) return
-  if (action.startsWith('-')) {
-    var { error: delErr } = await supa.from('managers').delete().eq('discord_id', action.slice(1))
-    if (delErr) { showToast('Error: ' + delErr.message, 'error'); return }
-  } else {
-    var { error: insErr } = await supa.from('managers').insert({ discord_id: action, added_by: currentUser.discordId })
-    if (insErr) { showToast('Error: ' + insErr.message, 'error'); return }
+  var list = document.getElementById('manager-list')
+  if (!list) return
+  list.innerHTML = '<div class="loading"><div class="spinner"></div></div>'
+
+  var { data: dbManagers } = await supa.from('managers').select('*')
+  dbManagers = dbManagers || []
+
+  var html = ''
+  var configIds = CONFIG.MANAGER_USER_IDS || []
+
+  configIds.forEach(function(id) {
+    var initial = id.charAt(0)
+    html += '<div class="manager-item">' +
+      '<div class="manager-avatar">' + initial + '</div>' +
+      '<div class="manager-info">' +
+        '<div class="manager-id">' + id + '</div>' +
+        '<div class="manager-source">Config</div>' +
+      '</div>' +
+      '<span style="font-size:0.75rem;color:var(--text-muted)">hardcoded</span>' +
+    '</div>'
+  })
+
+  dbManagers.forEach(function(m) {
+    var initial = m.discord_id.charAt(0)
+    html += '<div class="manager-item">' +
+      '<div class="manager-avatar">' + initial + '</div>' +
+      '<div class="manager-info">' +
+        '<div class="manager-id">' + m.discord_id + '</div>' +
+        '<div class="manager-source">added by ' + (m.added_by_name || m.added_by || '?') + '</div>' +
+      '</div>' +
+      '<button class="btn btn-danger btn-sm" onclick="removeManager(\'' + m.discord_id + '\')">✕</button>' +
+    '</div>'
+  })
+
+  list.innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--text-muted)">No managers added yet</div>'
+}
+
+async function addManager() {
+  if (!isManager) return
+  var input = document.getElementById('manager-input')
+  var id = input ? input.value.trim() : ''
+  if (!id) { showToast('Enter a Discord ID', 'error'); return }
+  if (!/^\d+$/.test(id)) { showToast('ID must be digits only', 'error'); return }
+
+  var { error } = await supa.from('managers').insert({
+    discord_id: id,
+    added_by: currentUser.discordId,
+    added_by_name: currentUser.discordName
+  })
+  if (error) {
+    if (error.code === '23505') { showToast('This user is already a manager', 'error'); return }
+    showToast('Error: ' + error.message, 'error')
+    return
   }
-  showToast('Done', 'success')
-  location.reload()
+  showToast('Manager added', 'success')
+  if (input) input.value = ''
+  await renderManagerPanel()
+}
+
+async function removeManager(id) {
+  if (!isManager) return
+  if (!confirm('Remove this manager?')) return
+  var { error } = await supa.from('managers').delete().eq('discord_id', id)
+  if (error) { showToast('Error: ' + error.message, 'error'); return }
+  showToast('Manager removed', 'success')
+  await renderManagerPanel()
 }
 
 function updateUI() {
