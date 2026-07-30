@@ -52,7 +52,7 @@ async function loadRaids() {
     var card = e.target.closest('.raid-card')
     if (card) {
       sessionStorage.setItem('raidId', card.dataset.id)
-      window.location.href = '/raid.html'
+      window.location.href = 'raid.html'
     }
   }
 
