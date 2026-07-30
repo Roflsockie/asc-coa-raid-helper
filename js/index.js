@@ -54,9 +54,14 @@ async function loadRaids() {
       e.stopPropagation()
       if (!confirm('Delete this raid?')) return
       var id = del.dataset.deleteId
-      await supa.from('signups').delete().eq('raid_id', id)
-      await supa.from('raids').delete().eq('id', id)
-      await loadRaids()
+      try {
+        var { error: e1 } = await supa.from('signups').delete().eq('raid_id', id)
+        if (e1) { showToast('Delete signups error: ' + e1.message, 'error'); return }
+        var { error: e2 } = await supa.from('raids').delete().eq('id', id)
+        if (e2) { showToast('Delete raid error: ' + e2.message, 'error'); return }
+        showToast('Raid deleted', 'success')
+        await loadRaids()
+      } catch (err) { showToast('Error: ' + err.message, 'error') }
       return
     }
     var card = e.target.closest('.raid-card')
